@@ -10,8 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.18",
+    "@heroicons/react": "^2.1.1",
     "@techstark/opencv-js": "^4.9.0-release.2",
     "axios": "^1.6.7",
+    "daisyui": "^4.7.3",
+    "flowbite": "^2.3.0",
+    "flowbite-react": "^0.7.2",
     "localforage": "^1.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Game, GameSession, User
+from .models import Game, GameSession, SessionDataPoint, User
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,9 +42,21 @@ class GameSerializer(serializers.ModelSerializer):
 class GameSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameSession
-        fields = ['id','user','created_at']
+        fields = ['id','user','is_active','created_at']
         extra_kwargs = {
             'id': {'read_only': True},
             'user': {'read_only': True},
+            'is_active': {'read_only': True},
             'created_at': {'read_only': True},
         }
+
+class SessionDataPointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SessionDataPoint
+        fields = ['id','session','game','active_time','created_at']
+        extra_kwargs = {
+            'id': {'read_only': True},
+            'session': {'read_only': True},
+            'created_at': {'read_only': True},
+        }
+

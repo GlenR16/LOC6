@@ -9,6 +9,9 @@ import uuid
 def upload_profile(instance,filename):
     return f"profiles/{uuid.uuid4().hex}.{filename.split('.')[-1]}"
 
+def upload_games(instance,filename):
+    return f"games/{uuid.uuid4().hex}.{filename.split('.')[-1]}"
+
 # Create your models here.
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_("Email Address"),unique=True,max_length=127)
@@ -43,7 +46,7 @@ class Game(models.Model):
     tags = models.CharField(_("Tags"),max_length=255,default="")
     url = models.URLField(_("URL"))
 
-    image = models.ImageField(_("Image"),upload_to="games",null=True,blank=True)
+    image = models.ImageField(_("Image"),upload_to=upload_games)
     created_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -59,6 +62,7 @@ class Game(models.Model):
     
 class GameSession(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="game_sessions")
+    is_active = models.BooleanField(_("Is Active"),default=True)
     created_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
