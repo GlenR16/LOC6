@@ -1,12 +1,12 @@
 import React from "react";
 
-export default function Card(props) {
+export default function RemoveCard(props) {
 
-  const { title, imageUrl, categories, handleAddGame, id} = props;
+  const { title, imageUrl, categories, handleRemoveGame, id} = props;
   // console.log(title, imageUrl, categories, handleAddGame, id);
   return (
     <div>
-      <div className="game-card w-56 h-max bg-base-100 shadow-xl">
+      <div className="card w-56 h-max bg-base-100 shadow-xl">
         <figure>
           <img src={imageUrl} alt={title} />
         </figure>
@@ -19,8 +19,8 @@ export default function Card(props) {
               </div>
             ))}
           </div>
-          <button onClick={()=>handleAddGame(id)} className="mt-2 rounded-md hover:opacity-75 w-max p-2 ml-auto bg-[#0036C0] text-white">
-            Add this game
+          <button onClick={()=>handleRemoveGame(id)} className="mt-2 rounded-md hover:opacity-75 w-max p-2 ml-auto bg-red-500 text-white">
+            Remove this game
           </button>
         </div>
       </div>

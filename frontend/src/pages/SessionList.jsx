@@ -1,8 +1,21 @@
+import { useEffect, useState } from "react";
+import useAxiosAuth from "../api/api";
+import { NavLink } from "react-router-dom";
+
 export default function SessionList() {
+    const axios = useAxiosAuth();
+    const [sessionList, setSessionList] = useState([]);
+
+    useEffect(() => {
+        axios.get("/gameSessions/").then((response) => {
+            setSessionList(response.data);
+        });
+    },[]);
+
 	return (
 		<section className="bg-base-100">
-			<div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
-				<div className="overflow-x-auto">
+			<div className="p-4 mx-auto lg:py-16">
+				<div className="w-3/4 mx-auto">
 					<table className="table">
 						<thead>
 							<tr>
@@ -12,14 +25,22 @@ export default function SessionList() {
 							</tr>
 						</thead>
 						<tbody>
-                            
-							<tr>
-								<th>1</th>
-								<td>Cy Ganderton</td>
-								<td>Quality Control Specialist</td>
-								<td>Blue</td>
-							</tr>
-							
+                            {
+                                sessionList.length == 0?
+                                <tr>
+                                    <td colSpan="3" className="text-center">No Sessions</td>
+                                </tr>
+                                :
+                                sessionList.map((session, index) => (
+                                    <tr key={index}>
+                                        <th>{index+1}</th>
+                                        <th>{session.created_at}</th>
+                                        <td>
+                                            <NavLink to={`/history/${session.id}`}>View</NavLink>
+                                        </td>
+                                    </tr>
+                                ))
+                            }
 						</tbody>
 					</table>
 				</div>
