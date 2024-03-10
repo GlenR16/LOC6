@@ -36,23 +36,25 @@ export default function Hangman() {
 	};
 
 	return (
-		
-		<div className="flex min-h-full flex-1 flex-col sm-max-with justify-center items-center px-6 py-12 lg:px-8">
+		<div className="flex min-h-full flex-1 flex-col w-full ustify-center items-center  py-12 ">
+		<div className="border max-w-screen-md">
+
 			<h1>Hangman</h1>
 			<p>{displayWord()}</p>
 			<p>Incorrect Letters: {incorrectLetters.join(", ")}</p>
 			{!isLoser && (
 				<input
-					type="text"
-					value={""} // bind this to a state if you want to capture user input
-					onChange={(e) => addGuessedLetter(e.target.value)}
-					maxLength={1}
+				type="text"
+				value={""} // bind this to a state if you want to capture user input
+				onChange={(e) => addGuessedLetter(e.target.value)}
+				maxLength={1}
 				/>
 			)}
 			{isWinner && <p>YOU ARE A WINNER</p>}
-			{isLoser && <p>YOU ARE A LOSER</p>}
+			{isLoser && <p>YOU ARE A LOSER <br />. The word to be guessed was {wordToGuess} </p>}
 
 			<button onClick={restartGame}>Restart Game</button>
 		</div>
+				</div>
 	);
 }

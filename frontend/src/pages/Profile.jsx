@@ -6,7 +6,7 @@ export default function Profile() {
   const axios = useAxiosAuth();
 
   useEffect(() => {
-    axios.get('user').then((response) => {
+    axios.get('/user/').then((response) => {
       setUser(response.data);
       console.log(response.data)
     });

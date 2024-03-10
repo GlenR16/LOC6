@@ -30,12 +30,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 				<Route path="history/:sessionID" element={<SessionDetail />} />
 
 				<Route path="profile" element={<Profile />} />
+			</Route>
                 <Route path="/session" element={<GamesLayout />}>
                     <Route index element={<Session />} />
                     <Route path=":sessionID" element={<Playground />} />
                 </Route>
-                <Route path="/test" element={<Playground />} />
-			</Route>
 		</Routes>
 	</BrowserRouter>
 );

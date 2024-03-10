@@ -2,7 +2,7 @@ import { useState } from "react";
 import Card from "./GameCard";
 import "./styles.css"
 
-function Cards() {
+function MemoryGame() {
 	const styles ={}
 	const [score, setScore] = useState(0);
 	const [items, setItems] = useState(
@@ -82,4 +82,4 @@ function Cards() {
 	);
 }
 
-export default Cards;
+export default MemoryGame;
