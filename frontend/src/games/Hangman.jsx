@@ -36,9 +36,8 @@ export default function Hangman() {
 	};
 
 	return (
-		<div className="flex min-h-full flex-1 flex-col w-full ustify-center items-center  py-12 ">
-		<div className="border max-w-screen-md">
-
+		<div className="flex flex-col max-w-full justify-center items-center  py-20 mx-80 border-solid border-2 border-black">
+	
 			<h1>Hangman</h1>
 			<p>{displayWord()}</p>
 			<p>Incorrect Letters: {incorrectLetters.join(", ")}</p>
@@ -54,7 +53,7 @@ export default function Hangman() {
 			{isLoser && <p>YOU ARE A LOSER <br />. The word to be guessed was {wordToGuess} </p>}
 
 			<button onClick={restartGame}>Restart Game</button>
+
 		</div>
-				</div>
 	);
 }

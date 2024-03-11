@@ -2,7 +2,7 @@ from turtle import st
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import  AllowAny,IsAuthenticated
 from rest_framework import mixins
-from .serializers import GameSerializer, GameSessionSerializer, SessionDataPointSerializer, UserSerializer, UserCreateSerializer, UserUpdateSerializer
+from .serializers import GameSerializer, GameSessionSerializer, SessionDataPointSerializer, UserSerializer, UserCreateSerializer, UserUpdateSerializer,SessionDataListSerializer
 from .models import GameSession, SessionDataPoint, User,Game
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -85,7 +85,7 @@ class GameSessionViewSet(mixins.RetrieveModelMixin,mixins.ListModelMixin,mixins.
     serializer_class = GameSessionSerializer
 
     def get_queryset(self):
-        return self.request.user.game_sessions.all()
+        return self.request.user.game_sessions.all().order_by('-created_at')
     
     def get_permissions(self):
         if self.action == 'list' or self.action == 'create' or self.action == 'options':
@@ -103,7 +103,6 @@ class GameSessionViewSet(mixins.RetrieveModelMixin,mixins.ListModelMixin,mixins.
         return serializer.save()
     
     def perform_retrieve(self, instance):
-        print(instance)
         return instance
 
     def perform_destroy(self, instance):
@@ -112,8 +111,7 @@ class GameSessionViewSet(mixins.RetrieveModelMixin,mixins.ListModelMixin,mixins.
     
 class SessionDataPointViewSet(mixins.ListModelMixin,mixins.CreateModelMixin,GenericViewSet):
     serializer_class = SessionDataPointSerializer
-    queryset = SessionDataPoint.objects.all()
-    
+
     def get_permissions(self):
         if self.action == 'list' or self.action == 'create' or self.action == 'options':
             return [IsAuthenticated()]
@@ -124,7 +122,7 @@ class SessionDataPointViewSet(mixins.ListModelMixin,mixins.CreateModelMixin,Gene
             kwargs['data']['user'] = self.request.user.id
         return super().get_serializer(*args, **kwargs)
     
-    def perform_list(self, serializer):
+    def get_queryset(self):
         return self.request.user.game_sessions.filter(id=self.kwargs.get('pk')).first().data_points.all()
     
     def perform_create(self, serializer):

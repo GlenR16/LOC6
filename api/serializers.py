@@ -59,4 +59,10 @@ class SessionDataPointSerializer(serializers.ModelSerializer):
             'session': {'read_only': True},
             'created_at': {'read_only': True},
         }
+        depth = 1
+
+class SessionDataListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SessionDataPoint
+        fields = ['id','session','game','active_time','created_at']
 

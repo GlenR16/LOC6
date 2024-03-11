@@ -15,7 +15,7 @@ export default function SessionList() {
 	return (
 		<section className="bg-base-100">
 			<div className="p-4 mx-auto lg:py-16">
-				<div className="w-3/4 mx-auto">
+				<div className="w-1/2 mx-auto">
 					<table className="table">
 						<thead>
 							<tr>
@@ -34,7 +34,9 @@ export default function SessionList() {
                                 sessionList.map((session, index) => (
                                     <tr key={index}>
                                         <th>{index+1}</th>
-                                        <th>{session.created_at}</th>
+                                        <th>{
+                                        (new Date(session.created_at)).toLocaleTimeString() + " " + (new Date(session.created_at)).toLocaleDateString()
+                                        }</th>
                                         <td>
                                             <NavLink to={`/history/${session.id}`}>View</NavLink>
                                         </td>

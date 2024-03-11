@@ -7,8 +7,8 @@ import useAxiosAuth from "../api/api";
 const navigation = [
 	{ name: "Home", href: "/", current: true },
 	{ name: "Dashboard", href: "/dashboard", current: false },
-	{ name: "History", href: "/history", current: false },
 	{ name: "Start Session", href: "/session", current: false },
+	{ name: "History", href: "/history", current: false },
 ];
 
 function classNames(...classes) {

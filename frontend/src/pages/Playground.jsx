@@ -4,6 +4,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import PlayCard from "../components/PlayCard.jsx";
 import Hangman from "../games/Hangman.jsx";
 import useAxiosAuth from "../api/api.js";
+import TicTacToe from "../games/TicTacToe.jsx";
 import MemoryGame from "../games/CardGame.jsx";
 
 export default function Playground() {
@@ -11,16 +12,12 @@ export default function Playground() {
 	const [games, setGames] = useState([]);
 	const [currentGame, setCurrentGame] = useState(null);
 	const [timerout, setTimerout] = useState(null);
-	const [gameAnalytics, setGameAnalytics] = useState({
-		active_time: 0,
-		game: null,
-	});
+	const totalCaptures = useRef(0);
+	const activeCaptures = useRef(0);
 
 	const api = useAxiosAuth();
 	const navigate = useNavigate();
 	const { sessionID } = useParams();
-
-	// const [test, setTest] = useState(null);
 
 	const dummyGames = [
 		{
@@ -31,23 +28,23 @@ export default function Playground() {
 			id: 8,
 			object: <MemoryGame />,
 		},
+		{
+			id: 12,
+			object: <TicTacToe />
+		}
 	];
 
 	const videoRef = useRef();
 
 	function createFileFromUrlAsync(path, url) {
-		console.log("Loading file: ", path);
 		return new Promise((resolve, reject) => {
-			console.log("Loading file: ", path);
 			fetch(url)
 				.then((res) => res.arrayBuffer())
 				.then((data) => {
 					cv.FS_createDataFile("/", path, new Uint8Array(data), true, false, false);
-					console.log("file loaded: ", path);
 					resolve();
 				})
 				.catch((err) => {
-					console.error("Failed to load " + url + " status: " + err);
 					reject();
 				});
 		});
@@ -55,15 +52,17 @@ export default function Playground() {
 
 	function handleSessionClose() {
 		if (document.fullscreenElement) document.exitFullscreen();
-		api.post("/sessionDataPoints/", {
-			game: currentGame,
-			active_time: gameAnalytics.active_time,
-		});
+		if (currentGame){
+			api.post("/sessionDataPoints/", {
+				game: currentGame,
+				active_time: Math.round(((activeCaptures.current*1.0) / (totalCaptures.current==0?1:totalCaptures.current))*100),
+			});
+		}
 		api.delete(`/gameSessions/active/`)
-			.then((res) => {
-				navigate("/dashboard");
-			})
-			.catch((err) => console.error(err));
+		.then((res) => {
+			navigate("/dashboard");
+		})
+		.catch((err) => console.error(err));
 	}
 
 	function createFileFromUrl(path, url, callback) {
@@ -98,8 +97,6 @@ export default function Playground() {
 						})
 						.then((stream) => {
 							videoRef.current.srcObject = stream;
-							console.log("Stream: ", stream);
-							// setTest(stream);
 							document.documentElement.requestFullscreen();
 						})
 						.catch((error) => console.error("Error accessing camera:", error));
@@ -137,20 +134,15 @@ export default function Playground() {
 			let eyeMat = new cv.Mat();
 			cv.pyrDown(gray, faceMat);
 			cv.pyrDown(faceMat, faceMat);
-
 			size = faceMat.size();
 			faceClassifier.detectMultiScale(faceMat, faceVect);
 			for (let i = 0; i < faceVect.size(); i++) {
 				let face = faceVect.get(i);
 				faces.push(new cv.Rect(face.x, face.y, face.width, face.height));
 			}
+			totalCaptures.current++;
 			if (faceVect.size() > 0) {
-				setGameAnalytics((prev) => {
-					return {
-						...prev,
-						active_time: prev.active_time + 1,
-					};
-				});
+				activeCaptures.current++;
 			}
 			faceMat.delete();
 			faceVect.delete();
@@ -169,23 +161,29 @@ export default function Playground() {
 	}, [videoRef.current]);
 
 	useEffect(() => {
+		let intervalId;
 		if (timerout) {
-			setTimerout((timerout) => {
-				clearInterval(timerout);
-				return null;
-			});
+			clearInterval(timerout);
+			setTimerout(null);
 		}
 		if (currentGame) {
-			setTimerout(
-				setInterval(() => {
-					api.post("/sessionDataPoints/", {
-						game: currentGame,
-						active_time: gameAnalytics.active_time,
-					});
-				}, 30000)
-			);
+			intervalId = setInterval(() => {
+				api.post("/sessionDataPoints/", {
+					game: currentGame,
+					active_time: Math.round(((activeCaptures.current*1.0) / (totalCaptures.current==0?1:totalCaptures.current))*100),
+				});
+				activeCaptures.current = 0;
+				totalCaptures.current = 0;
+			}, 60000);
+			setTimerout(intervalId);
 		}
+		return () => {
+			if (timerout) {
+				clearInterval(timerout);
+			}
+		};
 	}, [currentGame]);
+	
 
 	return (
 		<div className="m-5">
